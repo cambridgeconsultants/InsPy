@@ -1,0 +1,128 @@
+variables:
+  PYTHON_VERSION: "3.10"
+  UV_CACHE_DIR: "$CI_PROJECT_DIR/.cache/uv"
+  ARTIF_USER: SECURE
+  ARTIF_PASSWORD: SECURE
+  ARTIF_REPO: SECURE
+  GIT_DEPTH: 0
+  GIT_FETCH_EXTRA_FLAGS: --tags
+default:
+  cache:
+    paths:
+      - .cache
+
+# -------------------------
+# Smokey (container) env
+# -------------------------
+.env-smokey:
+  tags:
+    - smokey-docker-linux-internet
+  image: ghcr.io/astral-sh/uv:python3.10-bookworm
+  before_script:
+    - uv sync --frozen --python $PYTHON_VERSION
+    - uv run python --version
+
+# -------------------------
+# Windows test rig
+# -------------------------
+.env-win11:
+  tags:
+    - win11
+  before_script:
+    - git clean -fxd -e .cache -e dist
+    - uv sync --frozen --python $PYTHON_VERSION
+    - uv run python --version
+
+# -------------------------
+# Linux test rig
+# -------------------------
+.env-linux:
+  tags:
+    - linux
+  before_script:
+    - git clean -fxd -e .cache -e dist
+    - uv sync --frozen --python $PYTHON_VERSION
+    - uv run python --version
+
+stages:
+  - build
+  - test
+  - deploy
+
+# -------------------------
+# Build wheel
+# -------------------------
+build:
+  stage: build
+  extends: .env-smokey
+  needs: []
+  script:
+    - SETUPTOOLS_SCM_PRETEND_VERSION=$CI_COMMIT_TAG uv build --wheel
+  artifacts:
+    paths:
+      - dist
+
+# -------------------------
+# Lint
+# -------------------------
+lint:
+  stage: test
+  extends: .env-smokey
+  needs: []
+  script:
+    - uv run ruff check
+    - uv run ruff format --check
+
+# -------------------------
+# Type checking
+# -------------------------
+type-check:
+  stage: test
+  extends: .env-smokey
+  needs: []
+  script:
+    - uv run ty check
+
+# -------------------------
+# Windows tests
+# -------------------------
+test-win11:
+  stage: test
+  extends: .env-win11
+  needs: []
+  script:
+    - uv run pytest -s --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+
+# -------------------------
+# Linux tests
+# -------------------------
+test-linux:
+  stage: test
+  extends: .env-linux
+  needs: []
+  script:
+    - uv run pytest -s --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+
+# -------------------------
+# Documentation
+# -------------------------
+documentation:
+  stage: deploy
+  extends: .env-smokey
+  needs: []
+  script:
+    - uv run sphinx-build -b html docs docs/_build/html -W
+  after_script:
+    - mv docs/_build/html/ ./documentation/
+    - rm -f docs/warnings.log
+  artifacts:
+    paths:
+      - documentation

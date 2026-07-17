@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=77.0.0", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cc-inspy"
+description = "Tool for control of test and measurement instruments in Python"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+
+dynamic = ["version"] # Version is calculated dynamically by setuptools_scm.
+
+dependencies = [
+    "pyvisa",
+    "pyvisa-py",
+    "psutil",
+    "zeroconf",
+    "pyusb",
+    "pyserial",
+    "libusb-package",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "pre-commit",
+  "pillow",
+  "sphinx",
+  "sphinx-rtd-theme>=2.0.0",
+  "sphinx-autodoc-typehints",
+  "myst-parser",
+  "numpy",
+  "scipy",
+  "ruff>=0.15.12",
+  "ty>=0.0.33",
+]
+
+[project.scripts]
+inspy = "inspy.__main__:main"
+
+
+[tool.setuptools_scm]
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "TCH", # flake8-type-checking
+    "ANN", # flake8-annotations (type hints)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["inspy"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107"]
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s"
+log_cli_date_format = "%H:%M:%S"

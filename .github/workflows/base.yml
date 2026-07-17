@@ -1,0 +1,107 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v5
+    - uses: astral-sh/setup-uv@v8.3.2
+      with:
+        python-version: "3.10"
+        fetch-depth: 0
+    - run: |
+        uv sync --frozen
+        uv run python --version
+        uv build
+      env:
+        SETUPTOOLS_SCM_PRETEND_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+    - uses: actions/upload-artifact@v6
+      with:
+        name: build-output
+        path: dist
+        retention-days: 30
+
+  lint:
+    name: Linting
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: "3.10"
+      - run: |
+          uv sync --frozen
+          uv run python --version
+          uv run ruff check
+          uv run ruff format --check
+
+  type-check:
+    name: Type-checking
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: "3.10"
+      - run: |
+          uv sync --frozen
+          uv run python --version
+          uv run ty check
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: "3.10"
+          fetch-depth: 0
+      - run: |
+          uv sync --frozen
+          uv run python --version
+          uv run sphinx-build -b html docs docs/_build/html -W
+          mv docs/_build/html ./documentation/
+          rm -f docs/warnings.log
+      - uses: actions/upload-artifact@v6
+        with:
+          name: docs
+          path: documentation
+          retention-days: 30
+      - uses: actions/upload-pages-artifact@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          path: documentation
+
+  deploy-pypi:
+    name: Deploy package to PyPI
+    needs: build
+    if: ${{ github.ref_type == 'tag' }}
+    runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: build-output
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  deploy-docs:
+    name: Deploy docs to GitHub Pages
+    needs: docs
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
