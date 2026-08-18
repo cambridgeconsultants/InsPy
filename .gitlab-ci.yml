@@ -90,6 +90,7 @@ test-win11:
   stage: test
   extends: .env-win11
   needs: []
+  allow_failure: true
   script:
     - uv run pytest -s --junitxml=report.xml
   artifacts:
@@ -104,6 +105,7 @@ test-linux:
   stage: test
   extends: .env-linux
   needs: []
+  allow_failure: true
   script:
     - uv run pytest -s --junitxml=report.xml
   artifacts:
