@@ -4,7 +4,7 @@
 
 - [Documentation](https://cambridgeconsultants.github.io/InsPy/)
 - [Getting Started](#getting-started)
-- [GitHub Repo](https://github.com/cambridgeconsultants/inspy)
+- [GitHub Repo](https://github.com/cambridgeconsultants/InsPy)
 
 ## Table of Contents
 - [Installation](#installation)
