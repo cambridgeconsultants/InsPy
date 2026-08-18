@@ -30,6 +30,11 @@ dependencies = [
     "libusb-package",
 ]
 
+[project.urls]
+Repository = "https://github.com/cambridgeconsultants/InsPy"
+Documentation = "https://cambridgeconsultants.github.io/InsPy/"
+Issues = "https://github.com/cambridgeconsultants/InsPy/issues"
+
 [dependency-groups]
 dev = [
   "pytest",
