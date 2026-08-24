@@ -1,5 +1,18 @@
 # InsPy
 
+## Introduction
+
+InsPy is a Python library and command-line tool for controlling test and
+measurement instruments (oscilloscopes, power supplies, digital
+multimeters etc) over USB, Serial, or LAN connections.
+
+It provides a consistent, vendor-agnostic API across supported instrument
+brands, so the same code works with a variety of instrument manufacturers.
+InsPy makes it easier to write repeatable, automated test scripts without
+hand-coding raw SCPI commands for each device. Its OOP-based framework allows
+new instruments to be easily added, producing a scalable tool tailored to your
+test automation needs.
+
 ## Links
 
 - [Documentation](https://cambridgeconsultants.github.io/InsPy/)
