@@ -71,7 +71,7 @@ jobs:
           path: documentation
           retention-days: 30
       - uses: actions/upload-pages-artifact@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_type == 'tag' }}
         with:
           path: documentation
 
@@ -93,7 +93,7 @@ jobs:
   deploy-docs:
     name: Deploy docs to GitHub Pages
     needs: docs
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref_type == 'tag' }}
     runs-on: ubuntu-24.04
     permissions:
       pages: write
