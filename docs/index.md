@@ -1,8 +1,4 @@
-# InsPy Documentation
-
-## Links
 ```{include} ../README.md
-:start-after: "[Documentation]"
 ```
 
 ## API Reference
