@@ -286,23 +286,21 @@ class OscilloscopeTest(ABC):
         scope.set_setup(initial_setup)
         assert initial_setup == scope.get_setup()
 
-    def _test_get_screenshot(
+    def test_get_screenshot(
         self, scope: Oscilloscope, width: int = 800, height: int = 503
     ) -> None:
+        """Test O8."""
         im = PIL.Image.open(BytesIO(scope.get_screenshot()))
         assert im.size == (width, height)
 
-    def test_get_screenshot(self, scope: Oscilloscope) -> None:
-        """Test O8."""
-        self._test_get_screenshot(scope)
-
-    def _test_wavegen_square(
+    def test_wavegen_square(
         self,
         scope: OscilloscopeKeysightBase,
         measure_counter: bool = False,
         measure_pre_shoot: bool = False,
         extra_measurements: bool = True,
     ) -> None:
+        """Test O9."""
         vmax = 3.3
         vmin = 0.0
         duty = 0.4
@@ -396,10 +394,6 @@ class OscilloscopeTest(ABC):
             scope.set_wavegen_ramp_symmetry(0.5)
 
         scope.set_wavegen_output_enable(False)
-
-    def test_wavegen_square(self, scope: OscilloscopeKeysightBase) -> None:
-        """Test O9."""
-        self._test_wavegen_square(scope)
 
     def test_wavegen(self, scope: OscilloscopeKeysightBase) -> None:
         """Test O10."""

@@ -19,6 +19,12 @@ class TestKeysightDSOX1102G(OscilloscopeTest):
         except (VisaIOError, ValueError):
             skip("Instrument not connected")
 
-    def test_wavegen_square(self, scope: OscilloscopeKeysightBase) -> None:
+    def test_wavegen_square(
+        self,
+        scope: OscilloscopeKeysightBase,
+        measure_counter: bool = False,
+        measure_pre_shoot: bool = False,
+        extra_measurements: bool = False,
+    ) -> None:
         """Test O9."""
-        super()._test_wavegen_square(scope, extra_measurements=False)
+        super().test_wavegen_square(scope, extra_measurements=extra_measurements)

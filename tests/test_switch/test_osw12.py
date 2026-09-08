@@ -23,6 +23,7 @@ class TestOpticalSwitchThorLabsOSW12:
             skip("Instrument not connected")
 
     def test_set_state(self, switch: OpticalSwitchThorlabsOSW12) -> None:
+        """Test OS1."""
         switch.set_state(1)
         assert switch.get_state() == 1
 
@@ -37,10 +38,12 @@ class TestOpticalSwitchThorLabsOSW12:
         assert switch.get_state() == 1
 
     def test_reset(self, switch: OpticalSwitchThorlabsOSW12) -> None:
+        """Test OS2."""
         switch.set_state(2)
         assert switch.get_state() == 2
         switch.reset()
         assert switch.get_state() == 1
 
     def test_id(self, switch: OpticalSwitchThorlabsOSW12) -> None:
+        """Test OS3."""
         assert switch.get_id().startswith("OSW1x2 Optical Switch V")
