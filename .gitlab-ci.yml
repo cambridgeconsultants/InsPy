@@ -48,6 +48,7 @@ stages:
   - build
   - test
   - deploy
+  - publish-pages
 
 # -------------------------
 # Build wheel
@@ -128,3 +129,18 @@ documentation:
   artifacts:
     paths:
       - documentation
+
+# -------------------------
+# GitLab Pages
+# -------------------------
+pages:
+  stage: publish-pages
+  needs:
+    - documentation
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - mv documentation public
+  artifacts:
+    paths:
+      - public
