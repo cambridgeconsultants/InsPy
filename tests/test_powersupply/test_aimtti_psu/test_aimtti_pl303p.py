@@ -20,6 +20,17 @@ class TestAimttiPL303P(PowerSupplyTest):
         except (VisaIOError, ValueError):
             skip("Instrument not connected")
 
-    def test_reset(self, psu: PowerSupply) -> None:
+    def test_reset(
+        self,
+        psu: PowerSupply,
+        sleep: bool = False,
+        sleep_after_reset: bool = False,
+        expected_voltage: float = 0.1,
+    ) -> None:
         """Test P7."""
-        super()._test_reset(psu, sleep=False, expected_voltage=0.1)
+        super().test_reset(
+            psu,
+            sleep=sleep,
+            sleep_after_reset=sleep_after_reset,
+            expected_voltage=expected_voltage,
+        )

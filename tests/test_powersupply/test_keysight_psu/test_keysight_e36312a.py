@@ -20,16 +20,23 @@ class TestKeysightE36312A(PowerSupplyTest):
         except (VisaIOError, ValueError):
             skip("Instrument not connected")
 
-    def test_measure_voltage_after_channel_set(self, psu: PowerSupply) -> None:
+    def test_measure_voltage_after_channel_set(
+        self, psu: PowerSupply, sleep_between_runs: bool = False
+    ) -> None:
         """Test P4."""
-        super()._test_measure_voltage_after_channel_set(psu, sleep_between_runs=False)
+        super().test_measure_voltage_after_channel_set(
+            psu, sleep_between_runs=sleep_between_runs
+        )
 
     def test_set_output_voltage_trip_point(
-        self, psu: PowerSupplyTest.PowerSupplyWithTrip
+        self,
+        psu: PowerSupplyTest.PowerSupplyWithTrip,
+        voltage: float = 5.1,
+        sleep_between_runs: bool = False,
     ) -> None:
         """Test P5."""
-        super()._test_set_output_voltage_trip_point(
-            psu, voltage=5.1, sleep_between_runs=False
+        super().test_set_output_voltage_trip_point(
+            psu, voltage=voltage, sleep_between_runs=sleep_between_runs
         )
 
     @pytest.mark.skip("Not implemented")
@@ -37,9 +44,20 @@ class TestKeysightE36312A(PowerSupplyTest):
         """Test P6."""
         pass
 
-    def test_reset(self, psu: PowerSupply) -> None:
+    def test_reset(
+        self,
+        psu: PowerSupply,
+        sleep: bool = False,
+        sleep_after_reset: bool = False,
+        expected_voltage: float = 0,
+    ) -> None:
         """Test P7."""
-        super()._test_reset(psu, sleep=False)
+        super().test_reset(
+            psu,
+            sleep=sleep,
+            sleep_after_reset=sleep_after_reset,
+            expected_voltage=expected_voltage,
+        )
 
     def test_reset_voltage_trip_disable_channel(self, psu: PsuKeysightE36312A) -> None:
         psu.set_output_voltage_trip_point(voltage=5)

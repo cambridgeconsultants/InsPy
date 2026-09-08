@@ -24,12 +24,20 @@ class TestAgilentDSO6012A(OscilloscopeTest):
         except (VisaIOError, ValueError):
             skip("Instrument not connected")
 
-    def test_get_screenshot(self, scope: Oscilloscope) -> None:
+    def test_get_screenshot(
+        self, scope: Oscilloscope, width: int = 1024, height: int = 829
+    ) -> None:
         """Test O8."""
-        super()._test_get_screenshot(scope, width=1024, height=829)
+        super().test_get_screenshot(scope, width=width, height=height)
 
     @pytest.mark.skip("Not implemented on Agilent DSO6012A")
-    def test_wavegen_square(self, scope: OscilloscopeKeysightBase) -> None:
+    def test_wavegen_square(
+        self,
+        scope: OscilloscopeKeysightBase,
+        measure_counter: bool = False,
+        measure_pre_shoot: bool = False,
+        extra_measurements: bool = True,
+    ) -> None:
         """Test O9."""
         pass
 

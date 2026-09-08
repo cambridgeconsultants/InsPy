@@ -21,7 +21,8 @@ class DigitMultimeterTest(ABC):
     def print_id(self, dmm: DigitalMultimeter) -> None:
         dmm.logger.info(f"ID: {dmm.get_id()}")
 
-    def _test_measurements(self, dmm: DmmKeysight344xxA) -> None:
+    def test_measurements(self, dmm: DmmKeysight344xxA) -> None:
+        """Test M1."""
         voltage = dmm.measure_voltage()
         current = dmm.measure_current()
         voltage_ac = dmm.measure_voltage_ac()
@@ -60,21 +61,15 @@ class DigitMultimeterTest(ABC):
         assert isinstance(frequency, float)
         assert isinstance(period, float)
 
-    def test_measurements(self, dmm: DmmKeysight344xxA) -> None:
-        """Test M1."""
-        self._test_measurements(dmm)
-
-    def _test_set_trace_function(self, dmm: DigitalMultimeter) -> None:
+    def test_set_trace_function(self, dmm: DigitalMultimeter) -> None:
+        """Test M2."""
         dmm.set_sampling_measurement_mode(function="CURR:AC")
         assert dmm.get_sampling_measurement_mode() == "CURR:AC"
         dmm.reset()
         assert dmm.get_sampling_measurement_mode() == "VOLT"
 
-    def test_set_trace_function(self, dmm: DigitalMultimeter) -> None:
-        """Test M2."""
-        self._test_set_trace_function(dmm)
-
-    def _test_trace_function(self, dmm: DmmKeysight344xxA) -> None:
+    def test_trace_function(self, dmm: DmmKeysight344xxA) -> None:
+        """Test M3."""
         dmm.set_sampling_measurement_mode(function="VOLT")
         dmm.set_trigger_immediate()
         dmm.set_sample_points(sample_points=5)
@@ -94,20 +89,14 @@ class DigitMultimeterTest(ABC):
         assert dmm.get_measurement_range() == 1
         assert isclose(dmm.get_trigger_delay(), 0.5, abs_tol=1e-3)
 
-    def test_trace_function(self, dmm: DmmKeysight344xxA) -> None:
-        """Test M3."""
-        self._test_trace_function(dmm)
-
-    def _test_exception(self, dmm: DigitalMultimeter) -> None:
+    def test_exception(self, dmm: DigitalMultimeter) -> None:
+        """Test M4."""
         dmm.set_sampling_measurement_mode(function="CAP")
         with raises(Exception) as _:
             dmm.set_averaging_time(averaging_time=1)
 
-    def test_exception(self, dmm: DigitalMultimeter) -> None:
-        """Test M4."""
-        self._test_exception(dmm)
-
-    def _test_frequency_measurements(self, dmm: DmmKeysight344xxA) -> None:
+    def test_frequency_measurements(self, dmm: DmmKeysight344xxA) -> None:
+        """Test M5."""
         dmm.set_measure_frequency_bandwidth(bandwidth=3)
         frequency = dmm.measure_frequency()
         period = dmm.measure_period()
@@ -115,7 +104,3 @@ class DigitMultimeterTest(ABC):
         assert dmm.get_measure_frequency_bandwidth() == 3
         assert frequency is not None
         assert period is not None
-
-    def test_frequency_measurements(self, dmm: DmmKeysight344xxA) -> None:
-        """Test M5."""
-        self._test_frequency_measurements(dmm)

@@ -23,7 +23,8 @@ class PowerSupplyTest(ABC):
 
     PowerSupplyWithTrip = aimtti_psu.PsuAimTTiBase | keysight_psu.PsuKeysightBase
 
-    def _test_set_get_channel_state(self, psu: PowerSupply) -> None:
+    def test_set_get_channel_state(self, psu: PowerSupply) -> None:
+        """Test P1."""
         for test_channel in psu.channels:
             time.sleep(0.5)
             psu.set_channel_state(channel=test_channel, enable=True)
@@ -37,11 +38,8 @@ class PowerSupplyTest(ABC):
             time.sleep(0.5)
             assert psu.get_channel_state(channel=test_channel) is False
 
-    def test_set_get_channel_state(self, psu: PowerSupply) -> None:
-        """Test P1."""
-        self._test_set_get_channel_state(psu)
-
-    def _test_set_get_voltage(self, psu: PowerSupply) -> None:
+    def test_set_get_voltage(self, psu: PowerSupply) -> None:
+        """Test P2."""
         test_voltage = 1
         for test_channel in psu.channels:
             psu.set_voltage(voltage=test_voltage, channel=test_channel)
@@ -49,11 +47,8 @@ class PowerSupplyTest(ABC):
             time.sleep(0.5)
             assert psu.get_voltage(channel=test_channel) == test_voltage
 
-    def test_set_get_voltage(self, psu: PowerSupply) -> None:
-        """Test P2."""
-        self._test_set_get_voltage(psu)
-
-    def _test_set_get_current(self, psu: PowerSupply) -> None:
+    def test_set_get_current(self, psu: PowerSupply) -> None:
+        """Test P3."""
         test_current = 1
         for test_channel in psu.channels:
             psu.set_current(current=test_current, channel=test_channel)
@@ -61,13 +56,10 @@ class PowerSupplyTest(ABC):
             time.sleep(0.5)
             assert psu.get_current(channel=test_channel) == test_current
 
-    def test_set_get_current(self, psu: PowerSupply) -> None:
-        """Test P3."""
-        self._test_set_get_current(psu)
-
-    def _test_measure_voltage_after_channel_set(
+    def test_measure_voltage_after_channel_set(
         self, psu: PowerSupply, sleep_between_runs: bool = True
     ) -> None:
+        """Test P4."""
         test_voltage = 3
         for test_channel in psu.channels:
             psu.set_voltage(voltage=test_voltage, channel=test_channel)
@@ -79,16 +71,13 @@ class PowerSupplyTest(ABC):
                 test_voltage, rel=0.1
             )
 
-    def test_measure_voltage_after_channel_set(self, psu: PowerSupply) -> None:
-        """Test P4."""
-        self._test_measure_voltage_after_channel_set(psu)
-
-    def _test_set_output_voltage_trip_point(
+    def test_set_output_voltage_trip_point(
         self,
         psu: PowerSupplyWithTrip,
         voltage: float = 20,
         sleep_between_runs: bool = True,
     ) -> None:
+        """Test P5."""
         test_voltage = voltage
         for test_channel in psu.channels:
             psu.set_output_voltage_trip_point(
@@ -102,13 +91,8 @@ class PowerSupplyTest(ABC):
             )
         psu.reset()
 
-    def test_set_output_voltage_trip_point(self, psu: PowerSupplyWithTrip) -> None:
-        """Test P5."""
-        self._test_set_output_voltage_trip_point(psu)
-
-    def _test_set_output_current_trip_point(
-        self, psu: aimtti_psu.PsuAimTTiBase
-    ) -> None:
+    def test_set_output_current_trip_point(self, psu: aimtti_psu.PsuAimTTiBase) -> None:
+        """Test P6."""
         test_current = 0.5
         for test_channel in psu.channels:
             psu.set_output_current_trip_point(
@@ -121,17 +105,14 @@ class PowerSupplyTest(ABC):
             )
         psu.reset()
 
-    def test_set_output_current_trip_point(self, psu: aimtti_psu.PsuAimTTiBase) -> None:
-        """Test P6."""
-        self._test_set_output_current_trip_point(psu)
-
-    def _test_reset(
+    def test_reset(
         self,
         psu: PowerSupply,
         sleep: bool = True,
         sleep_after_reset: bool = False,
         expected_voltage: float = 0,
     ) -> None:
+        """Test P7."""
         psu.set_voltage(voltage=1)
         psu.set_channel_state()
         psu.await_completion()
@@ -144,7 +125,3 @@ class PowerSupplyTest(ABC):
 
         assert psu.get_channel_state() is False
         assert psu.get_voltage() == expected_voltage
-
-    def test_reset(self, psu: PowerSupply) -> None:
-        """Test P7."""
-        self._test_reset(psu)
