@@ -148,7 +148,7 @@ class DigitalMultimeter(InstrumentBase):
         pass
 
 
-class DmmError(InstrumentError):
+class DigitalMultimeterError(InstrumentError):
     """Base class for errors raised by the Digital Multimeter."""
 
     pass

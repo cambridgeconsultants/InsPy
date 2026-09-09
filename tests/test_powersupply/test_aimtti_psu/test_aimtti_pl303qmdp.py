@@ -40,7 +40,6 @@ class TestAimttiPL303QMDP(PowerSupplyTest):
             psu.set_current_range(
                 current_range=test_current_range, channel=test_channel
             )
-            psu.await_completion()
             time.sleep(0.5)
             assert psu.get_current_range(channel=test_channel) == test_current_range
         psu.reset()
