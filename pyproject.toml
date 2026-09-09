@@ -44,10 +44,14 @@ dev = [
   "sphinx-rtd-theme>=2.0.0",
   "sphinx-autodoc-typehints",
   "myst-parser",
+  "nbsphinx",
   "numpy",
   "scipy",
   "ruff>=0.15.12",
   "ty>=0.0.33",
+  "matplotlib>=3.10.9",
+  "ipython>=8.39.0",
+  "pypandoc-binary>=1.17",
 ]
 
 [project.scripts]
