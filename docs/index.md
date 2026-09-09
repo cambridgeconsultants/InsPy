@@ -9,6 +9,7 @@ cookbook/getting_started
 cookbook/oscilloscope
 cookbook/digital_multimeter
 cookbook/power_supply
+cookbook/signal_generator
 ```
 
 ## API Reference
