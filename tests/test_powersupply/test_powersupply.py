@@ -28,13 +28,11 @@ class PowerSupplyTest(ABC):
         for test_channel in psu.channels:
             time.sleep(0.5)
             psu.set_channel_state(channel=test_channel, enable=True)
-            psu.await_completion()
             time.sleep(0.5)
             assert psu.get_channel_state(channel=test_channel) is True
 
             time.sleep(0.5)
             psu.set_channel_state(channel=test_channel, enable=False)
-            psu.await_completion()
             time.sleep(0.5)
             assert psu.get_channel_state(channel=test_channel) is False
 
@@ -43,7 +41,6 @@ class PowerSupplyTest(ABC):
         test_voltage = 1
         for test_channel in psu.channels:
             psu.set_voltage(voltage=test_voltage, channel=test_channel)
-            psu.await_completion()
             time.sleep(0.5)
             assert psu.get_voltage(channel=test_channel) == test_voltage
 
@@ -52,7 +49,6 @@ class PowerSupplyTest(ABC):
         test_current = 1
         for test_channel in psu.channels:
             psu.set_current(current=test_current, channel=test_channel)
-            psu.await_completion()
             time.sleep(0.5)
             assert psu.get_current(channel=test_channel) == test_current
 
@@ -64,7 +60,6 @@ class PowerSupplyTest(ABC):
         for test_channel in psu.channels:
             psu.set_voltage(voltage=test_voltage, channel=test_channel)
             psu.set_channel_state(channel=test_channel)
-            psu.await_completion()
             if sleep_between_runs:
                 time.sleep(0.5)
             assert psu.measure_voltage(channel=test_channel) == approx(
@@ -83,7 +78,6 @@ class PowerSupplyTest(ABC):
             psu.set_output_voltage_trip_point(
                 voltage=test_voltage, channel=test_channel
             )
-            psu.await_completion()
             if sleep_between_runs:
                 time.sleep(0.5)
             assert (
@@ -98,7 +92,6 @@ class PowerSupplyTest(ABC):
             psu.set_output_current_trip_point(
                 current=test_current, channel=test_channel
             )
-            psu.await_completion()
             time.sleep(0.5)
             assert (
                 psu.get_output_current_trip_point(channel=test_channel) == test_current
@@ -115,7 +108,6 @@ class PowerSupplyTest(ABC):
         """Test P7."""
         psu.set_voltage(voltage=1)
         psu.set_channel_state()
-        psu.await_completion()
 
         if sleep and not sleep_after_reset:
             time.sleep(0.5)

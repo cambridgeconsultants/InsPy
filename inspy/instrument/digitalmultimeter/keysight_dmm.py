@@ -9,7 +9,7 @@ from inspy.instrument._base import (
     with_check,
 )
 
-from ._base import DigitalMultimeter, DmmError
+from ._base import DigitalMultimeter, DigitalMultimeterError
 
 POLLING_CYCLE = 0.5
 Measurements = Literal[
@@ -41,8 +41,9 @@ class DmmKeysight344xxA(
     `Keysight 344xxA User Manual <https://www.keysight.com/us/en/assets/7018-03846/data-sheets/5991-1983.pdf>`_
     """  # noqa E501
 
-    _error_class = DmmError
+    _error_class = DigitalMultimeterError
 
+    @with_check
     def reset(self) -> None:
         """Reset instrument to factory default state, including clearing status."""
         self.transport.clear()
@@ -116,6 +117,7 @@ class DmmKeysight344xxA(
         self.transport.set_timeout(timeout=original_timeout)
         return return_val
 
+    @with_check
     def set_measure_frequency_bandwidth(self, bandwidth: float) -> None:
         """Set the AC bandwidth for frequency and period measurements.
 
@@ -259,6 +261,7 @@ class DmmKeysight344xxA(
             self.transport.query(f"{self.get_sampling_measurement_mode()}:RANG?")
         )
 
+    @with_check
     def set_measurement_range_auto(self, enable: bool = True) -> None:
         """Set autoranging for measurements.
 
@@ -286,6 +289,7 @@ class DmmKeysight344xxA(
         )
 
     # Trigger
+    @with_check
     def set_trigger_immediate(self) -> None:
         """Set trigger source to immediate.
 
@@ -293,6 +297,7 @@ class DmmKeysight344xxA(
         """
         self.transport.command("TRIG:SOUR IMM")
 
+    @with_check
     def set_trigger_external(self, pos_edge: bool = True) -> None:
         """Set trigger source to external.
 
@@ -305,6 +310,7 @@ class DmmKeysight344xxA(
         self.transport.command("TRIG:SOUR EXT")
         self.transport.command(f"TRIG:SLOP {'POS' if pos_edge else 'NEG'}")
 
+    @with_check
     def set_trigger_internal_level(
         self, trigger_level: float, pos_edge: bool = True
     ) -> None:
@@ -323,6 +329,7 @@ class DmmKeysight344xxA(
         self.transport.command(f"TRIG:LEV {trigger_level}")
         self.transport.command(f"TRIG:SLOP {'POS' if pos_edge else 'NEG'}")
 
+    @with_check
     def set_trigger_bus(self) -> None:
         """Set trigger source to BUS.
 
@@ -421,6 +428,7 @@ class DmmKeysight344xxA(
         """
         return float(self.transport.query("SAMP:TIM?"))
 
+    @with_check
     def set_sample_interval_min(self) -> None:
         """Set the recommended interval for the current measurement configuration."""
         self.transport.command("SAMP:SOUR TIM")

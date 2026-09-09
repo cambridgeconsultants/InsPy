@@ -19,12 +19,40 @@ from typing import Literal
 
 from pyvisa.errors import VisaIOError
 
-from inspy.instrument._base import VisaInstrumentMixin
+from inspy.instrument._base import (
+    ErrorCheckedInstrumentMixin,
+    VisaInstrumentMixin,
+    with_check,
+)
 
-from ._base import PowerSupply
+from ._base import PowerSupply, PowerSupplyError
+
+_EXECUTION_ERRORS = {
+    100: "Range error: The numeric value sent is not allowed.",
+    101: "A recall of set up data has been requested, but the store specified contains"
+    " corrupted data. This is either a hardware fault or a temporary data corruption,"
+    " which can be corrected by writing data to the store again",
+    102: "A recall of set up data has been requested, but the store specified does not"
+    " contain any data.",
+    103: "Attempt to read or write a command on the second output when it is not"
+    " available. Typically occurs when reading / writing a command on the second output"
+    " when it is not available, or on a two-channel instrument which is set to"
+    " parallel mode",
+    104: "Command not valid with output on. Ensure output is off before sending"
+    " this command.",
+    200: "Read Only: An attempt has been made to change the settings of"
+    " the instrument from an interface without write priveleges.",
+}
+
+_QUERY_ERRORS = {
+    1: "Interrupted: Input queue contains more than one END message or a"
+    " <PROGRAM MESSAGE TERMINATOR> has been read by the parser.",
+    2: "Deadlock: A response is pending and the input queue is full.",
+    3: "Unterminated: The supply is addressed to talk when it has no response to send.",
+}
 
 
-class PsuAimTTiBase(VisaInstrumentMixin, PowerSupply):
+class PsuAimTTiBase(ErrorCheckedInstrumentMixin, VisaInstrumentMixin, PowerSupply):
     """Aim TTi Power supply base class.
 
     Based on Aim TTi CPX400DP power supply
@@ -32,8 +60,32 @@ class PsuAimTTiBase(VisaInstrumentMixin, PowerSupply):
 
     """
 
+    _error_class = PowerSupplyError
     reset_timeout = 5.0
 
+    def get_errors(self) -> list[tuple[int, str]]:
+        """Get errors from the TTi execution and query error registers.
+
+        The TTi does not implement the SCPI ``:SYSTem:ERRor?`` queue. Instead
+        it provides two read and clear registers returning a bare numeric code.
+
+        Keep in mind, `EER?` is a single register, not a queue.
+        This will only hold one error code.
+        """
+        errors = []
+        for register, descriptions in (
+            ("EER", _EXECUTION_ERRORS),
+            ("QER", _QUERY_ERRORS),
+        ):
+            code = int(self.transport.query(f"{register}?"))
+            if code != 0:
+                errors.append(
+                    (code, descriptions.get(code, f"Unknown {register} error"))
+                )
+
+        return errors
+
+    @with_check
     def set_channel_state(self, enable: bool = True, channel: int = 1) -> None:
         """Set a specific channel on or off."""
         assert channel in self.channels, self.channel_error_message
@@ -46,6 +98,7 @@ class PsuAimTTiBase(VisaInstrumentMixin, PowerSupply):
 
         return bool(int(self.transport.query(f"OP{channel}?")))
 
+    @with_check
     def set_voltage(self, voltage: float, channel: int = 1) -> None:
         """Set the voltage of the power supply."""
         assert channel in self.channels, self.channel_error_message
@@ -61,6 +114,7 @@ class PsuAimTTiBase(VisaInstrumentMixin, PowerSupply):
         # We then take the last element of the partition and convert it to a float
         return float(self.transport.query(f"V{channel}?").partition(" ")[2])
 
+    @with_check
     def set_current(self, current: float, channel: int = 1) -> None:
         """Set the current of the power supply."""
         assert channel in self.channels, self.channel_error_message
@@ -92,6 +146,7 @@ class PsuAimTTiBase(VisaInstrumentMixin, PowerSupply):
         # We take a substring of the query result excluding the last 'A' character
         return float(self.transport.query(f"I{channel}O?")[:-1])
 
+    @with_check
     def set_output_voltage_trip_point(self, voltage: float, channel: int = 1) -> None:
         """Set the output voltage value at which to trip the power supply.
 
@@ -110,6 +165,7 @@ class PsuAimTTiBase(VisaInstrumentMixin, PowerSupply):
 
         return float(self.transport.query(f"OVP{channel}?"))
 
+    @with_check
     def set_output_current_trip_point(self, current: float, channel: int = 1) -> None:
         """Set the output current value at which to trip the power supply.
 
@@ -127,10 +183,6 @@ class PsuAimTTiBase(VisaInstrumentMixin, PowerSupply):
         assert channel in self.channels, self.channel_error_message
 
         return float(self.transport.query(f"OCP{channel}?"))
-
-    def await_completion(self) -> None:
-        """Wait for the power supply to complete its operation."""
-        self.transport.query("*OPC?")
 
     def reset(self) -> None:
         """Reset the power supply."""
@@ -163,6 +215,7 @@ class PsuAimTTIPL303P(PsuAimTTiBase):
 
     channels = [1]
 
+    @with_check
     def set_current_range(
         self, current_range: Literal["Low", "High"], channel: int = 1
     ) -> None:
@@ -295,6 +348,7 @@ class PsuAimTTiPL303QMDP(PsuAimTTiBase):
         """
         return super().get_output_current_trip_point(self.swap[channel])
 
+    @with_check
     def set_current_range(
         self, current_range: Literal["Low", "High"], channel: int = 1
     ) -> None:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 
-from inspy.instrument._base import InstrumentBase
+from inspy.instrument._base import InstrumentBase, InstrumentError
 
 
 class PowerSupply(InstrumentBase):
@@ -67,3 +67,9 @@ class PowerSupply(InstrumentBase):
     def reset(self) -> None:
         """Reset the power supply to default settings."""
         pass
+
+
+class PowerSupplyError(InstrumentError):
+    """Base class for all power supply related errors."""
+
+    pass

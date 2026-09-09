@@ -2,15 +2,21 @@
 
 from time import sleep
 
-from inspy.instrument._base import VisaInstrumentMixin
-from inspy.instrument.powersupply._base import PowerSupply
+from inspy.instrument._base import (
+    ErrorCheckedInstrumentMixin,
+    VisaInstrumentMixin,
+    with_check,
+)
+from inspy.instrument.powersupply._base import PowerSupply, PowerSupplyError
 
 # Delay required for trip status to be reliably updated after a trip event occurs.
 TRIP_STATE_DELAY = 1
 
 
-class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
+class PsuKeysightBase(ErrorCheckedInstrumentMixin, VisaInstrumentMixin, PowerSupply):
     """Base class for Keysight Power Supply instruments."""
+
+    _error_class = PowerSupplyError
 
     def _append_channel_string(
         self, channel: int, command: str, space: bool = False
@@ -32,6 +38,7 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
             separator = " " if space else ","
             return command + f"{separator}(@{channel})"
 
+    @with_check
     def set_channel_state(self, enable: bool = True, channel: int = 1) -> None:
         """Set channel on or off.
 
@@ -62,6 +69,7 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
         command_with_channel = self._append_channel_string(channel, command, space=True)
         return bool(int(self.transport.query(command_with_channel)))
 
+    @with_check
     def set_voltage(self, voltage: float, channel: int = 1) -> None:
         """Set channel voltage.
 
@@ -92,6 +100,7 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
         command_with_channel = self._append_channel_string(channel, command, space=True)
         return float(self.transport.query(command_with_channel))
 
+    @with_check
     def set_current(self, current: float, channel: int = 1) -> None:
         """Set current limit on channel.
 
@@ -154,6 +163,7 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
         command_with_channel = self._append_channel_string(channel, command, space=True)
         return float(self.transport.query(command_with_channel))
 
+    @with_check
     def set_output_voltage_trip_point(self, voltage: float, channel: int = 1) -> None:
         """Set the output voltage value at which to trip the power supply.
 
@@ -199,6 +209,7 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
         sleep(TRIP_STATE_DELAY)
         return bool(int(self.transport.query("VOLT:PROT:TRIP?")))
 
+    @with_check
     def reset_voltage_trip_with_disable(self, channel: int = 1) -> None:
         """Clear overvoltage protection event. Disables channel.
 
@@ -226,6 +237,7 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
         sleep(TRIP_STATE_DELAY)
         return bool(int(self.transport.query("CURR:PROT:TRIP?")))
 
+    @with_check
     def set_current_protection_state(
         self, enable: bool = True, channel: int = 1
     ) -> None:
@@ -261,6 +273,7 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
         command_with_channel = self._append_channel_string(channel, command, space=True)
         return bool(int(self.transport.query(command_with_channel)))
 
+    @with_check
     def reset_current_trip_with_disable(self, channel: int = 1) -> None:
         """Clear overcurrent protection event. Disables channel.
 
@@ -286,10 +299,6 @@ class PsuKeysightBase(VisaInstrumentMixin, PowerSupply):
         for channel in self.channels:
             self.reset_voltage_trip_with_disable(channel)
             self.reset_current_trip_with_disable(channel)
-
-    def await_completion(self) -> None:
-        """Wait for all operations to complete."""
-        self.transport.query("*OPC?")
 
 
 class PsuKeysightE36312A(PsuKeysightBase):
