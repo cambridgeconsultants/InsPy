@@ -8,8 +8,15 @@
 import os
 import sys
 
+import pypandoc
+
 sys.path.insert(0, os.path.abspath("../.."))
 sys.path.append(os.path.abspath(os.path.join(__file__, "../../../inspy")))
+
+# Add pypandoc-binary to PATH for nbsphinx
+os.environ["PATH"] = (
+    os.path.dirname(pypandoc.get_pandoc_path()) + os.pathsep + os.environ["PATH"]
+)
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -52,10 +59,12 @@ author = ", ".join(authors)
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.viewcode",
+    "sphinx.ext.mathjax",
     "sphinx.ext.todo",
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
     "myst_parser",
+    "nbsphinx",
 ]
 
 autodoc_default_options = {
@@ -68,7 +77,7 @@ autodoc_default_options = {
 myst_heading_anchors = 3
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 language = "en"
 
@@ -86,4 +95,11 @@ todo_include_todos = True
 
 autodoc_mock_imports = ["pyvisa", "pyvisa_py", "usb"]
 
-suppress_warnings = ["myst.xref_missing"]
+# -- Options for nbsphinx -----------------------------------------------------
+# https://nbsphinx.readthedocs.io/en/latest/configuration.html
+
+# Cookbook notebooks talk to real instruments, so never execute them at build
+# time -- always render the outputs already saved in the .ipynb files.
+nbsphinx_execute = "never"
+
+suppress_warnings = ["myst.xref_missing", "nbsphinx.localfile"]

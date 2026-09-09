@@ -16,15 +16,15 @@ test automation needs.
 ## Links
 
 - [Documentation](https://cambridgeconsultants.github.io/InsPy/)
-- [Getting Started](#getting-started)
+- [Quick Start Guide](https://cambridgeconsultants.github.io/InsPy/cookbook/getting_started.html)
 - [GitHub Repo](https://github.com/cambridgeconsultants/InsPy)
 
 ## Table of Contents
 - [Installation](#installation)
   - [Command line](#command-line)
   - [wheel](#wheel)
-  - [pyproject.toml](#pyprojecttoml)
-  - [requirements.txt](#requirementstxt)
+  - [pyproject.toml](#pyproject-toml)
+  - [requirements.txt](#requirements-txt)
   - [Uv Package Manager](#uv-package-manager)
 - [Development](#development)
   - [Setup](#setup)
@@ -73,6 +73,8 @@ This is to make it so that inspy (and pyVISA) can see your USB device.
 2. `pip install cc-inspy-*-py3-none-any.whl`
 
 
+<a id="pyproject-toml"></a>
+
 ### pyproject.toml
 Add 'inspy' to the list of dependencies, for example:
 ```
@@ -81,6 +83,8 @@ dependencies = [
     "cc-inspy"
 ]
 ```
+
+<a id="requirements-txt"></a>
 
 ### requirements.txt
 Add the following to your `requirements.txt`:
@@ -164,7 +168,7 @@ start docs/_build/html/index.html
 
 ## Getting Started
 
-Now you have installed InsPy, check out the [quick start guide](docs/getting_started.md)
+Now you have installed InsPy, check out the [quick start guide](https://cambridgeconsultants.github.io/InsPy/cookbook/getting_started.html)
 
 ## License
 

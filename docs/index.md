@@ -1,11 +1,19 @@
 ```{include} ../README.md
 ```
 
+## Cookbook
+
+```{toctree}
+:maxdepth: 1
+cookbook/getting_started
+cookbook/oscilloscope
+cookbook/digital_multimeter
+```
+
 ## API Reference
 
 ```{toctree}
 :maxdepth: 1
-getting_started
 inspy
 inspy.instrument
 inspy.instrument.digitalmultimeter
