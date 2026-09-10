@@ -18,6 +18,7 @@ test automation needs.
 - [Documentation](https://cambridgeconsultants.github.io/InsPy/)
 - [Quick Start Guide](https://cambridgeconsultants.github.io/InsPy/cookbook/getting_started.html)
 - [GitHub Repo](https://github.com/cambridgeconsultants/InsPy)
+- [Changelog](https://github.com/cambridgeconsultants/InsPy/blob/main/CHANGELOG.md)
 
 ## Table of Contents
 - [Installation](#installation)

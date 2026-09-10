@@ -34,6 +34,7 @@ dependencies = [
 Repository = "https://github.com/cambridgeconsultants/InsPy"
 Documentation = "https://cambridgeconsultants.github.io/InsPy/"
 Issues = "https://github.com/cambridgeconsultants/InsPy/issues"
+Changelog = "https://github.com/cambridgeconsultants/InsPy/blob/main/CHANGELOG.md"
 
 [dependency-groups]
 dev = [
