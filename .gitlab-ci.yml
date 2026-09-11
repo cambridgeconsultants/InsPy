@@ -135,6 +135,7 @@ documentation:
 # -------------------------
 pages:
   stage: publish-pages
+  extends: .env-smokey
   needs:
     - documentation
   rules:
