@@ -314,7 +314,7 @@ class OscilloscopeKeysightBase(
                 f"Valid trigger sweep: {', '.join(self.TriggerSweep)}"
             )
 
-    @validate_args(mode=TriggerMode)
+    @validate_args(mode="TriggerMode")
     def set_trigger_mode(self, mode: str) -> None:
         """Set the trigger mode.
 
