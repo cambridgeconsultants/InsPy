@@ -208,8 +208,8 @@ class DmmKeysight344xxA(
         """
         trace_function = self.get_sampling_measurement_mode()
         if trace_function in ["VOLT", "CURR", "RES", "FRES", "TEMP"]:
-            self.transport.command("VOLT:APER:ENAB 1")
-            self.transport.command(f"VOLT:APER {averaging_time}")
+            self.transport.command(f"{trace_function}:APER:ENAB 1")
+            self.transport.command(f"{trace_function}:APER {averaging_time}")
         else:
             raise Exception(
                 "NPLC command is only supported by VOLT, CURR, RES, FRES, TEMP"
