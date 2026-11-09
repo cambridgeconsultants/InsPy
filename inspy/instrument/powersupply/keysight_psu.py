@@ -252,7 +252,7 @@ class PsuKeysightBase(ErrorCheckedInstrumentMixin, VisaInstrumentMixin, PowerSup
         """
         assert channel in self.channels, self.channel_error_message
 
-        self.set_channel_state(enable=False)
+        self.set_channel_state(enable=False, channel=channel)
         command = f"CURR:PROT:STAT {1 if enable else 0}"
         command_with_channel = self._append_channel_string(channel, command)
         self.transport.command(command_with_channel)
